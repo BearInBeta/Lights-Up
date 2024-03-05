@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3971678288214669372}
   - component: {fileID: 8836055927114299442}
-  - component: {fileID: 7676848146222347089}
   - component: {fileID: 7918050137747405849}
   m_Layer: 3
   m_Name: Shadow
@@ -43,7 +42,7 @@ EdgeCollider2D:
   m_GameObject: {fileID: 6490831702076775827}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 807c6724a0d6a3d498ed634755c11cde, type: 2}
+  m_Material: {fileID: 6200000, guid: dba513e9a0f8a3b4e8dd1d8d62eb94c6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -73,25 +72,6 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
---- !u!251 &7676848146222347089
-PlatformEffector2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6490831702076775827}
-  m_Enabled: 1
-  m_UseColliderMask: 1
-  m_ColliderMask:
-    serializedVersion: 2
-    m_Bits: 64
-  m_RotationalOffset: 0
-  m_UseOneWay: 1
-  m_UseOneWayGrouping: 0
-  m_SurfaceArc: 180
-  m_UseSideFriction: 0
-  m_UseSideBounce: 0
-  m_SideArc: 1
 --- !u!50 &7918050137747405849
 Rigidbody2D:
   serializedVersion: 4
@@ -108,7 +88,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: 807c6724a0d6a3d498ed634755c11cde, type: 2}
+  m_Material: {fileID: 6200000, guid: dba513e9a0f8a3b4e8dd1d8d62eb94c6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -148,7 +128,7 @@ Transform:
   m_GameObject: {fileID: 8999009509783593574}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3971678288214669372}
@@ -233,7 +213,7 @@ MonoBehaviour:
   - {x: 0.5, y: -0.50000006, z: 0}
   m_ShapePathHash: 234563565
   m_Mesh: {fileID: 0}
-  m_InstanceId: 28952
+  m_InstanceId: -1276
   m_LocalBounds:
     m_Center: {x: 0, y: -0.000000059604645, z: 0}
     m_Extent: {x: 0.5, y: 0.5, z: 0}
@@ -295,7 +275,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectToCastFrom: {fileID: 0}
-  numberOfRays: 360
   raycastDistance: 100
   groundLayer:
     serializedVersion: 2

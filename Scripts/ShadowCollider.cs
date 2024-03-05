@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 public class ShadowCollider : MonoBehaviour
 {
     public GameObject objectToCastFrom;
-    public int numberOfRays = 36; // Number of rays to cast around the object
+    int numberOfRays = 360; // Number of rays to cast around the object
     public float raycastDistance = 5f; // Maximum distance to cast the rays
     public LayerMask groundLayer; // Layer mask for ground objects
     public EdgeCollider2D edgeCollider;
@@ -21,8 +21,8 @@ public class ShadowCollider : MonoBehaviour
     {
         if (lastPosition != (Vector2)objectToCastFrom.transform.position)
         {
-            lastPosition = (Vector2)objectToCastFrom.transform.position;
             CastRays();
+            lastPosition = (Vector2)objectToCastFrom.transform.position;
         }
     }
 
@@ -53,7 +53,7 @@ public class ShadowCollider : MonoBehaviour
             // Draw the rays up to the hit point
             if (hitFound)
             {
-                //Debug.DrawRay(hit.point, direction * raycastDistance, Color.red);
+                Debug.DrawRay(hit.point, direction * raycastDistance, Color.red);
                 if (!firstHit)
                 {
                     pointsList.Add(edgeCollider.gameObject.transform.parent.InverseTransformPoint(hit.point));
@@ -64,7 +64,7 @@ public class ShadowCollider : MonoBehaviour
             }
             else
             {
-                // Debug.DrawRay(objectToCastFrom.transform.position, direction * raycastDistance, Color.green);
+                Debug.DrawRay(objectToCastFrom.transform.position, direction * raycastDistance, Color.green);
                 if (firstHit)
                 {
                     pointsList.Add(lastPoint2);
