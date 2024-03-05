@@ -13,7 +13,10 @@ public class ShadowCollider : MonoBehaviour
     public EdgeCollider2D edgeCollider;
     Vector2 lastPosition = Vector2.zero;
 
-
+    private void Start()
+    {
+        objectToCastFrom = GameObject.FindGameObjectWithTag("LightSource");
+    }
     private void FixedUpdate()
     {
         if (lastPosition != (Vector2)objectToCastFrom.transform.position)
@@ -22,8 +25,11 @@ public class ShadowCollider : MonoBehaviour
             CastRays();
         }
     }
- 
 
+    private void Update()
+    {
+        edgeCollider.isTrigger = objectToCastFrom.transform.parent != null;
+    }
     void CastRays()
     {
         Vector2[] points = new Vector2[4];
