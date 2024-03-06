@@ -6,16 +6,22 @@ using UnityEngine.UIElements;
 
 public class ShadowCollider : MonoBehaviour
 {
-    public GameObject objectToCastFrom;
-    int numberOfRays = 720;// Number of rays to cast around the object
+    public GameObject[] objectsToCastFrom;
     float raycastDistance = 100f; // Maximum distance to cast the rays
     public LayerMask groundLayer; // Layer mask for ground objects
     public EdgeCollider2D edgeCollider;
-    Vector2 lastPosition = Vector2.zero;
+    Vector2[] lastPositions;
 
     private void Start()
     {
-        objectToCastFrom = GameObject.FindGameObjectWithTag("LightSource");
+        objectsToCastFrom = GameObject.FindGameObjectsWithTag("LightSource");
+        lastPositions = new Vector2[objectsToCastFrom.Length];
+        for(int i = 0; i < objectsToCastFrom.Length; i++)
+        {
+            lastPositions[i] = objectsToCastFrom[i].transform.position;
+        }
+        CheckLights();
+
     }
     private void FixedUpdate()
     {
@@ -23,19 +29,28 @@ public class ShadowCollider : MonoBehaviour
 
     private void Update()
     {
-        edgeCollider.isTrigger = objectToCastFrom.transform.parent != null;
-
-        if (lastPosition != (Vector2)objectToCastFrom.transform.position)
-        {
-            //CastRays();
-            ShadeCollider();
-            lastPosition = (Vector2)objectToCastFrom.transform.position;
-
-        }
+        CheckLights();
     }
-    void ShadeCollider()
+    private void CheckLights()
     {
-        Vector2[] points;
+        Vector2[] points = new Vector2[0];
+        for (int i = 0; i < objectsToCastFrom.Length; i++)
+        {
+            GameObject obj = objectsToCastFrom[i];
+                        
+            if (obj.activeInHierarchy)
+            {
+                points = points.Concat(ShadeCollider(obj)).ToArray();
+                lastPositions[i] = (Vector2)obj.transform.position;
+
+            }
+        }
+
+        edgeCollider.points = points;
+    }
+    Vector2[] ShadeCollider(GameObject objectToCastFrom)
+    {
+        
 
         List<Vector2> pointsList = new List<Vector2>();
 
@@ -58,52 +73,10 @@ public class ShadowCollider : MonoBehaviour
             pointsList.Add(edgeCollider.gameObject.transform.parent.InverseTransformPoint(new Vector2(newX  , newY)));
 
         }
-
-        points = pointsList.ToArray();
-        edgeCollider.points = points;
+        return pointsList.ToArray();
+        
     }
-    void CastRays()
-    {
-        Vector2[] points;
-        // Calculate the angle between rays
-        float angleStep = 360f / numberOfRays;
-        List<Vector2> pointsList = new List<Vector2>();
-        List<Vector2[]> allHits = new List<Vector2[]>();
-        for (int i = 0; i < numberOfRays; i++)
-        {
-            
-            float angle = i * angleStep;
-            Vector3 direction = Quaternion.AngleAxis(angle, transform.forward) * transform.right;
-
-            RaycastHit2D hit = Physics2D.Raycast(objectToCastFrom.transform.position, direction, raycastDistance, groundLayer);
-
-            bool hitFound = hit && hit.collider.gameObject == gameObject;
-            Color c = Color.red;
-            if (hit)
-            {
-                c = Color.yellow;
-
-            }
-            // Draw the rays up to the hit point
-            if (hitFound)
-            {
-                c = Color.green;
-                
-                allHits.Add(new Vector2[] { edgeCollider.gameObject.transform.parent.InverseTransformPoint(hit.point), direction * raycastDistance });
-            }
-            //Debug.DrawRay(objectToCastFrom.transform.position, direction * raycastDistance, c, 5);
-
-        }
-
-        foreach (var point in allHits)
-        {
-            pointsList.Add(point[0]);
-            pointsList.Add(point[1]);
-        }
-
-        points = pointsList.ToArray();
-        edgeCollider.points = points;
-    }
+    
 
 
 

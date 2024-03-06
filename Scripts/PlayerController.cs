@@ -10,8 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform groundcheck;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float speed, jumpForce, jumpDetectRadius;
-    [SerializeField] Transform lightSource;
-    bool isInLight = false;
+    Transform isInLight;
     private float horizontal;
     // Start is called before the first frame update
     void Start()
@@ -35,15 +34,28 @@ public class PlayerController : MonoBehaviour
 
     public void lighControl(InputAction.CallbackContext context)
     {
-        if(context.performed && lightSource.parent != null && lightSource.parent.Equals(transform))
-        {
-            lightSource.parent = null;
-        }else if(context.performed && isInLight && lightSource.parent == null)
-        {
-            lightSource.parent = transform;
-            lightSource.transform.localPosition = new Vector3(0,0,lightSource.transform.localPosition.z);
 
+        if (context.performed)
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (transform.GetChild(i).gameObject.tag.Equals("LightSource"))
+                {
+                    transform.GetChild(i).parent = null;
+                    return;
+                }
+            }
+
+            if (isInLight != null && isInLight.parent == null)
+            {
+               
+
+                isInLight.parent = transform;
+                isInLight.transform.localPosition = new Vector3(0, 0, isInLight.transform.localPosition.z);
+
+            }
         }
+        
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -64,19 +76,18 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag.Equals("LightSource"))
         {
-            isInLight = true;
+            isInLight = collision.gameObject.transform;
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.tag.Equals("LightSource"))
         {
-            isInLight = false;
+            isInLight = null;
         }
     }
 }
