@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
         {
             lightSource.parent = transform;
             lightSource.transform.localPosition = new Vector3(0,0,lightSource.transform.localPosition.z);
+
         }
     }
 
