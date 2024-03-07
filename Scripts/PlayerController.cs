@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -7,7 +8,6 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] Transform groundcheck;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float speed, jumpForce, jumpDetectRadius;
     Transform isInLight;
@@ -21,15 +21,29 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
+        
     }
 
 
     private bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundcheck.position, jumpDetectRadius, groundLayer);
+        Physics2D.queriesHitTriggers = false;
+
+        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x / 2), transform.position.y);
+        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x / 2), transform.position.y);
+
+        RaycastHit2D hit1 = Physics2D.Raycast(ray1, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
+        RaycastHit2D hit2 = Physics2D.Raycast(ray2, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
+
+        if (hit1)
+            Debug.DrawLine(ray1, hit1.point, Color.red, 1);
+
+        if (hit2)
+            Debug.DrawLine(ray2, hit2.point, Color.red, 1);
+
+        return hit1 || hit2;
     }
 
     public void lighControl(InputAction.CallbackContext context)
