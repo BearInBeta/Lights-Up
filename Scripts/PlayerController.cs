@@ -9,9 +9,10 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] float speed, jumpForce, jumpDetectRadius;
+    [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax;
     Transform isInLight;
-    private float horizontal;
+    private float horizontal, jumpTimer, groundedTimer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +22,34 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        if (IsGrounded())
+        {
+            groundedTimer = groundedTimerMax;
+        }
+        if (groundedTimer > 0 && jumpTimer > 0)
+        {
+            groundedTimer = 0;
+            jumpTimer = 0;
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        }
 
+        if (jumpTimer > 0)
+            jumpTimer -= Time.deltaTime;
+        else
+            jumpTimer = 0;
+
+        if (groundedTimer > 0)
+            groundedTimer -= Time.deltaTime;
+        else
+            groundedTimer = 0;
+
+        float vertical = Mathf.Clamp(rb.velocity.y, -100, jumpForce);
+        rb.velocity = new Vector2(horizontal * speed, vertical);
+
+        
+    }
+    private void Update()
+    {
         
     }
 
@@ -75,13 +102,17 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
+        if (context.canceled || context.performed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+        }
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if(context.performed && IsGrounded())
+        if(context.performed)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jumpTimer = jumpTimerMax;
         }
 
         if (context.canceled && rb.velocity.y > 0)
