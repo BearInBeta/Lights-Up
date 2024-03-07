@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
-        if (context.canceled || context.performed)
+        if (context.canceled && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
         }
