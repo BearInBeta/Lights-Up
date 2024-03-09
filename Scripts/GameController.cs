@@ -9,11 +9,7 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     GameObject[] lights;
-    [SerializeField] Color playerColor, backgroundColor, groundColor;
-    [SerializeField] Color[] lightColors;
-    [SerializeField] GameObject player;
-    [SerializeField] GameObject background;
-    [SerializeField] Material groundMaterial;
+
     [SerializeField] float totalIntensity;
 
     // Start is called before the first frame update
@@ -38,18 +34,14 @@ public class GameController : MonoBehaviour
     }
     void SetupStage()
     {
-        int count = 0;
         lights = GameObject.FindGameObjectsWithTag("LightSource");
         Light2D globalLight = GameObject.FindGameObjectWithTag("GlobalLight").GetComponent<Light2D>();
-        globalLight.intensity = totalIntensity / 10;
+        globalLight.intensity = totalIntensity / 2;
         foreach (var light in lights)
         {
-            light.transform.GetComponentInChildren<Light2D>().intensity = (totalIntensity *9/10) / lights.Length;
-            light.gameObject.GetComponent<SpriteRenderer>().color = lightColors[count];
-            count = (count + 1) % lightColors.Length;
+            light.transform.GetComponentInChildren<Light2D>().intensity = (totalIntensity /2) / lights.Length;
+     
         }
-        player.GetComponent<SpriteRenderer>().color = playerColor;
-        background.GetComponent<SpriteRenderer>().color = backgroundColor;
-        groundMaterial.color = groundColor;
+   
     }
 }

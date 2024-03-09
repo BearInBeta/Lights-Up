@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        //rb.angularVelocity = 0;
+
         if (IsGrounded())
         {
             groundedTimer = groundedTimerMax;
@@ -50,7 +52,6 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        
     }
 
 
@@ -58,8 +59,8 @@ public class PlayerController : MonoBehaviour
     {
         Physics2D.queriesHitTriggers = false;
 
-        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x / 2), transform.position.y);
-        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x / 2), transform.position.y);
+        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x / 2 - 0.01f), transform.position.y);
+        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x / 2 - 0.01f), transform.position.y);
 
         RaycastHit2D hit1 = Physics2D.Raycast(ray1, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
         RaycastHit2D hit2 = Physics2D.Raycast(ray2, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
@@ -96,16 +97,22 @@ public class PlayerController : MonoBehaviour
 
             }
         }
-        
+        if (isInLight != null)
+        {
+            isInLight.rotation = Quaternion.identity;
+        }
+
+
     }
 
     public void Move(InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
-        if (context.canceled && IsGrounded())
+        if (context.canceled && groundedTimer > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
         }
+       
     }
 
     public void Jump(InputAction.CallbackContext context)
