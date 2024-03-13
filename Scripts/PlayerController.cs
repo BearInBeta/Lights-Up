@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Animator animator;
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax;
+    [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft;
     Transform isInLight;
     private float horizontal, jumpTimer, groundedTimer;
 
@@ -83,17 +83,17 @@ public class PlayerController : MonoBehaviour
     {
         Physics2D.queriesHitTriggers = false;
 
-        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x*0.25f / 2 - 0.01f), transform.position.y + 1);
-        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x * 0.25f / 2 - 0.01f), transform.position.y + 1);
+        Vector2 ray1 = new Vector2(transform.position.x + checkDistanceRight, transform.position.y);
+        Vector2 ray2 = new Vector2(transform.position.x - checkDistanceLeft, transform.position.y);
 
         RaycastHit2D hit1 = Physics2D.Raycast(ray1, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
         RaycastHit2D hit2 = Physics2D.Raycast(ray2, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
 
         if (hit1)
-            Debug.DrawLine(ray1, hit1.point, Color.red, 1);
+            Debug.DrawLine(ray1, ray1 - Vector2.up, Color.red, 1);
 
         if (hit2)
-            Debug.DrawLine(ray2, hit2.point, Color.red, 1);
+            Debug.DrawLine(ray2, ray2 - Vector2.up, Color.red, 1);
 
         return hit1 || hit2;
     }
