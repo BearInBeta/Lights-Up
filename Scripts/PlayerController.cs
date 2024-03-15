@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Animator animator;
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft;
+    [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft, lightUp, lightRight;
     Transform isInLight;
     private float horizontal, jumpTimer, groundedTimer;
 
@@ -117,7 +117,7 @@ public class PlayerController : MonoBehaviour
                
 
                 isInLight.parent = transform;
-                isInLight.transform.localPosition = new Vector3(.25f, 0.5f, isInLight.transform.localPosition.z);
+                isInLight.transform.localPosition = new Vector3(lightRight, lightUp, isInLight.transform.localPosition.z);
 
             }
         }
