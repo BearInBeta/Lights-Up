@@ -14,7 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed, jumpForce, jumpDetectRadius, slopeDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft, checkDistanceUp, lightUp, lightRight, pushSlower, slopeCheckOffset;
     Transform isInLight;
     private float horizontal, jumpTimer, groundedTimer;
-
+    private RaycastHit2D pullingObject;
+    private bool pulling;
     // Start is called before the first frame update
     void Start()
     {
@@ -83,6 +84,7 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Horizontal", Mathf.Abs(rb.velocity.x));
         animator.SetFloat("Vertical", rb.velocity.y);
         animator.SetBool("Pushing", IsPushing());
+        animator.SetBool("Pulling", pulling && Mathf.Sign(pullingObject.collider.gameObject.transform.position.x - transform.position.x) == -Mathf.Sign(rb.velocity.x));
 
 
         GetComponent<BoxCollider2D>().isTrigger = !(IsPushing() && Mathf.Abs(horizontal) > 0);
@@ -100,13 +102,16 @@ public class PlayerController : MonoBehaviour
 
     private void FlipPlayer()
     {
-        if (rb.velocity.x < 0)
+        if (!pulling)
         {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
-        }
-        else if (rb.velocity.x > 0)
-        {
-            transform.rotation = Quaternion.identity;
+            if (rb.velocity.x < 0)
+            {
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+            else if (rb.velocity.x > 0)
+            {
+                transform.rotation = Quaternion.identity;
+            }
         }
     }
 
@@ -200,7 +205,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private bool IsPushing()
+    private RaycastHit2D IsPushing()
     {
 
         Vector2 ray1 = new Vector2(transform.position.x, transform.position.y + checkDistanceUp);
@@ -255,10 +260,33 @@ public class PlayerController : MonoBehaviour
         }
        
     }
+    public void Pull(InputAction.CallbackContext context)
+    {
+        
+        
+        if (context.performed)
+        {
+            pullingObject = IsPushing();
+            if (pullingObject)
+            {
+                pullingObject.collider.gameObject.transform.parent = transform;
+                pullingObject.collider.gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
+                pulling = true;
+            }
+            
+        }
+
+        if (context.canceled && pullingObject)
+        {
+            pullingObject.collider.gameObject.transform.parent = null;
+            pullingObject.collider.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
+            pulling =  false;
+        }
+    }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if(context.performed && !pulling)
         {
             jumpTimer = jumpTimerMax;
         }
