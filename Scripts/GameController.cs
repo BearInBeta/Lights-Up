@@ -34,14 +34,7 @@ public class GameController : MonoBehaviour
     }
     void SetupStage()
     {
-        lights = GameObject.FindGameObjectsWithTag("LightSource");
-        Light2D globalLight = GameObject.FindGameObjectWithTag("GlobalLight").GetComponent<Light2D>();
-        globalLight.intensity = totalIntensity / 2;
-        foreach (var light in lights)
-        {
-            light.transform.GetComponentInChildren<Light2D>().intensity = (totalIntensity /2) / lights.Length;
-     
-        }
+        
    
     }
 }
