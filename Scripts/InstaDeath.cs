@@ -13,7 +13,7 @@ public class InstaDeath : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Instantiate(deathPrefab, new Vector3(collision.transform.position.x, transform.position.y + transform.lossyScale.y/2, 0.5f), Quaternion.identity);
-            Destroy(collision.gameObject);
+            //Destroy(collision.gameObject);
         }
     }
 }

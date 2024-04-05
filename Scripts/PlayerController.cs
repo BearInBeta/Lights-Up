@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     [SerializeField] LayerMask groundLayer, moveableLayer;
-    [SerializeField] float speed, jumpForce, jumpDetectRadius, slopeDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft, checkDistanceUp, lightUp, lightRight, pushSlower, slopeCheckOffset, slidingSpeed, slidingTimerMax, slideThetaMax;
+    [SerializeField] float speed, jumpForce, jumpDetectRadius, slopeDetectRadius, jumpTimerMax, groundedTimerMax, checkDistanceRight, checkDistanceLeft, checkDistanceUp, lightUp, lightRight, pushSlower, slopeCheckOffset, slidingSpeed, slidingTimerMax, slideThetaMax, moveableDetectRadius;
     Transform isInLight;
     private float horizontal, jumpTimer, groundedTimer, slidingTimer;
     private RaycastHit2D pullingObject;
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         //rb.angularVelocity = 0;
-
+        
         if (IsGrounded())
         {
             animator.SetBool("Grounded", true);
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
             groundedTimer = 0;
 
         float activeSpeed = speed;
-        if(IsPushing())
+        if (pulling)
         {
             activeSpeed = speed * pushSlower;
         }
@@ -95,13 +95,14 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("Sliding", slidingTimer == 0);        
         animator.SetFloat("Horizontal", Mathf.Abs(rb.velocity.x));
         animator.SetFloat("Vertical", rb.velocity.y);
-        animator.SetBool("Pushing", IsPushing());
-        animator.SetBool("Pulling", pulling && Mathf.Sign(pullingObject.collider.gameObject.transform.position.x - transform.position.x) == -Mathf.Sign(rb.velocity.x));
+  
+        animator.SetBool("Holding", pulling);
+        animator.SetBool("SignMatch", pullingObject && Mathf.Sign(pullingObject.collider.gameObject.transform.position.x - transform.position.x) == Mathf.Sign(rb.velocity.x));
 
 
-        GetComponent<BoxCollider2D>().isTrigger = !(IsPushing() && Mathf.Abs(horizontal) > 0);
-        
-        
+
+
+
 
 
 
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        
     }
 
     private void FlipPlayer()
@@ -197,12 +199,12 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private RaycastHit2D IsPushing()
+    private RaycastHit2D CloseToMoevable()
     {
 
         Vector2 ray1 = new Vector2(transform.position.x, transform.position.y + checkDistanceUp);
 
-        RaycastHit2D hit1 = Physics2D.Raycast(ray1, transform.right, jumpDetectRadius + transform.lossyScale.y / 2, moveableLayer);
+        RaycastHit2D hit1 = Physics2D.Raycast(ray1, transform.right, moveableDetectRadius + transform.lossyScale.y / 2, moveableLayer);
 
         if(hit1)
         Debug.DrawLine(ray1, ray1 + (Vector2)transform.right, Color.red, 1);
@@ -252,26 +254,58 @@ public class PlayerController : MonoBehaviour
         }
        
     }
+
+    GameObject FindChildWithTag(GameObject parent, string tag)
+    {
+        GameObject child = null;
+
+        foreach (Transform transform in parent.transform)
+        {
+            if (transform.CompareTag(tag))
+            {
+                child = transform.gameObject;
+                break;
+            }
+        }
+
+        return child;
+    }
+
     public void Pull(InputAction.CallbackContext context)
     {
         
         
-        if (context.performed)
+        if (context.started)
         {
-            pullingObject = IsPushing();
+            pullingObject = CloseToMoevable();
             if (pullingObject)
             {
-                pullingObject.collider.gameObject.transform.parent = transform;
+                pullingObject.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
                 pullingObject.collider.gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
+                pullingObject.collider.gameObject.transform.parent = transform;
+                FindChildWithTag(pullingObject.collider.gameObject, "BackupCollider").SetActive(true);
+                FindChildWithTag(pullingObject.collider.gameObject, "BackupCollider").transform.parent = transform;
+                
                 pulling = true;
+            }
+            else
+            {
+                pulling = false;
             }
             
         }
-
-        if (context.canceled && pullingObject)
+        
+        if (context.canceled)
         {
-            pullingObject.collider.gameObject.transform.parent = null;
-            pullingObject.collider.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
+            if (pullingObject)
+            {
+                pullingObject.collider.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
+                pullingObject.collider.gameObject.transform.parent = null;
+                FindChildWithTag(gameObject, "BackupCollider").SetActive(false);
+                FindChildWithTag(gameObject, "BackupCollider").transform.parent = pullingObject.collider.gameObject.transform;
+                pullingObject.collider.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+                pullingObject = new RaycastHit2D();
+            }
             pulling =  false;
         }
     }
