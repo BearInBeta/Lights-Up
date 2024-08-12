@@ -8,7 +8,6 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] Animator animator;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax;
     Transform isInLight;
@@ -27,13 +26,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsGrounded())
         {
-            animator.SetBool("Grounded", true);
             groundedTimer = groundedTimerMax;
-        }
-        else
-        {
-            animator.SetBool("Grounded", false);
-
         }
         if (groundedTimer > 0 && jumpTimer > 0)
         {
@@ -54,37 +47,20 @@ public class PlayerController : MonoBehaviour
 
         float vertical = Mathf.Clamp(rb.velocity.y, -100, jumpForce);
         rb.velocity = new Vector2(horizontal * speed, vertical);
-        animator.SetFloat("Horizontal", Mathf.Abs(rb.velocity.x));
-        animator.SetFloat("Vertical", rb.velocity.y);
 
-        FlipPlayer();
-
-
-
-
-
+        
     }
     private void Update()
     {
     }
 
-    private void FlipPlayer()
-    {
-        if (rb.velocity.x < 0)
-        {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
-        }
-        else if (rb.velocity.x > 0)
-        {
-            transform.rotation = Quaternion.identity;
-        }
-    }
+
     private bool IsGrounded()
     {
         Physics2D.queriesHitTriggers = false;
 
-        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x*0.25f / 2 - 0.01f), transform.position.y + 1);
-        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x * 0.25f / 2 - 0.01f), transform.position.y + 1);
+        Vector2 ray1 = new Vector2(transform.position.x + (transform.lossyScale.x / 2 - 0.01f), transform.position.y);
+        Vector2 ray2 = new Vector2(transform.position.x - (transform.lossyScale.x / 2 - 0.01f), transform.position.y);
 
         RaycastHit2D hit1 = Physics2D.Raycast(ray1, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
         RaycastHit2D hit2 = Physics2D.Raycast(ray2, -Vector2.up, jumpDetectRadius + transform.lossyScale.y / 2, groundLayer);
@@ -117,7 +93,7 @@ public class PlayerController : MonoBehaviour
                
 
                 isInLight.parent = transform;
-                isInLight.transform.localPosition = new Vector3(.25f, 0.5f, isInLight.transform.localPosition.z);
+                isInLight.transform.localPosition = new Vector3(0, 0, isInLight.transform.localPosition.z);
 
             }
         }
