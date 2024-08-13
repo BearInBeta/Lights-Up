@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float speed, jumpForce, jumpDetectRadius, jumpTimerMax, groundedTimerMax;
-    Transform isInLight;
+    Transform isInCarry;
     private float horizontal, jumpTimer, groundedTimer;
 
     // Start is called before the first frame update
@@ -81,25 +81,25 @@ public class PlayerController : MonoBehaviour
         {
             for (int i = 0; i < transform.childCount; i++)
             {
-                if (transform.GetChild(i).gameObject.tag.Equals("LightSource"))
+                if (transform.GetChild(i).gameObject.tag.Equals("Carry"))
                 {
                     transform.GetChild(i).parent = null;
                     return;
                 }
             }
 
-            if (isInLight != null && isInLight.parent == null)
+            if (isInCarry != null && isInCarry.parent == null)
             {
                
 
-                isInLight.parent = transform;
-                isInLight.transform.localPosition = new Vector3(0, 0, isInLight.transform.localPosition.z);
+                isInCarry.parent = transform;
+                isInCarry.transform.localPosition = new Vector3(0, 0, isInCarry.transform.localPosition.z);
 
             }
         }
-        if (isInLight != null)
+        if (isInCarry != null)
         {
-            isInLight.rotation = Quaternion.identity;
+            isInCarry.rotation = Quaternion.identity;
         }
 
 
@@ -130,16 +130,16 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag.Equals("LightSource"))
+        if (collision.tag.Equals("Carry"))
         {
-            isInLight = collision.gameObject.transform;
+            isInCarry = collision.gameObject.transform;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag.Equals("LightSource"))
+        if (collision.tag.Equals("Carry"))
         {
-            isInLight = null;
+            isInCarry = null;
         }
     }
 }

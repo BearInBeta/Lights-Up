@@ -23,8 +23,8 @@ public class GameController : MonoBehaviour
         lights = GameObject.FindGameObjectsWithTag("LightSource");
         foreach (var light in lights)
         {
-            light.transform.GetComponentInChildren<Light2D>().intensity = totalIntensity / lights.Length;
-            light.gameObject.GetComponent<SpriteRenderer>().color = lightColors[count];
+            light.transform.GetComponent<Light2D>().intensity = totalIntensity / lights.Length;
+            light.gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer>().color = lightColors[count];
             count = (count + 1) % lightColors.Length;
         }
         player.GetComponent<SpriteRenderer>().color = playerColor;
