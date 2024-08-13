@@ -5,6 +5,7 @@ using UnityEngine;
 public class InstaDeath : MonoBehaviour
 {
     [SerializeField] GameObject deathPrefab;
+    [SerializeField] bool exact = false;
 
     // Start is called before the first frame update
    
@@ -12,7 +13,11 @@ public class InstaDeath : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Instantiate(deathPrefab, new Vector3(collision.transform.position.x, transform.position.y + transform.lossyScale.y/2, 0.5f), Quaternion.identity);
+            if(!exact)
+                Instantiate(deathPrefab, new Vector3(collision.transform.position.x, transform.position.y + transform.lossyScale.y/2, 0.5f), Quaternion.identity);
+            else
+                Instantiate(deathPrefab, new Vector3(collision.transform.position.x, transform.position.y, 0.5f), Quaternion.identity);
+
             collision.gameObject.SetActive(false);
         }
     }

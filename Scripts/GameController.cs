@@ -54,6 +54,7 @@ public class GameController : MonoBehaviour
     {
         if (context.performed)
         {
+
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
