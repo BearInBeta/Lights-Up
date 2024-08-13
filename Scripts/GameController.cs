@@ -9,9 +9,9 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    GameObject[] lights;
+    GameObject[] lights, doors, grounds;
     [SerializeField] Color playerColor, backgroundColor, groundColor;
-    [SerializeField] Color[] lightColors;
+    [SerializeField] Color[] lightColors, doorColors;
     [SerializeField] GameObject player;
     [SerializeField] GameObject background;
     [SerializeField] Material groundMaterial;
@@ -27,9 +27,22 @@ public class GameController : MonoBehaviour
             light.gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer>().color = lightColors[count];
             count = (count + 1) % lightColors.Length;
         }
+
+        doors = GameObject.FindGameObjectsWithTag("Door");
+        foreach (var door in doors)
+        {
+            door.gameObject.GetComponent<SpriteRenderer>().color = doorColors[count];
+            count = (count + 1) % lightColors.Length;
+        }
+
+        grounds = GameObject.FindGameObjectsWithTag("Ground");
+        foreach (var ground in grounds)
+        {
+            ground.gameObject.GetComponent<SpriteRenderer>().color = groundColor;
+        }
+
         player.GetComponent<SpriteRenderer>().color = playerColor;
         background.GetComponent<SpriteRenderer>().color = backgroundColor;
-        groundMaterial.color = groundColor;
     }
 
     // Update is called once per frame

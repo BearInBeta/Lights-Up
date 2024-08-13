@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
         return hit1 || hit2;
     }
 
-    public void lighControl(InputAction.CallbackContext context)
+    public void carryItem(InputAction.CallbackContext context)
     {
 
         if (context.performed)
